@@ -7,6 +7,9 @@ const getWaitingDriverTravels = async () => {
   return { type: null, message: travels }; 
 };
 
+const travelAssign = async () => {};
+
 module.exports = {
   getWaitingDriverTravels,
+  travelAssign,
 };
