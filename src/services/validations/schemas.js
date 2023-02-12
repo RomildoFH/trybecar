@@ -33,9 +33,15 @@ const addCarSchema = Joi.object({
       .message('"licensePlate" length must be less than or equal to 7 characters long'),
 });
 
+const addDriverSchema = Joi.object({
+  name: Joi.string().min(3).required(),
+  carIds: Joi.array().items(idSchema),
+});
+
 module.exports = {
   idSchema,
   addPassengerSchema,
   addRequestTravelSchema,
   addCarSchema,
+  addDriverSchema,
 };

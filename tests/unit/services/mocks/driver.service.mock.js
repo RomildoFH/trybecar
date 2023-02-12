@@ -47,6 +47,31 @@ const driverList = [
   undefined
 ];
 
+const createdDriver = { id: 1, name: 'Gus' };
+
+const createdDriverWithoutCars = {
+  ...createdDriver,
+  cars: [],
+};
+
+const createdDriverWithCars = {
+  ...createdDriver,
+  cars: [
+    {
+      color: 'Branco',
+      id: 1,
+      licensePlate: 'NCA-0956',
+      model: 'Renault Sandero',
+    },
+    {
+      color: 'Vermelho',
+      id: 2,
+      licensePlate: 'DZG-4376',
+      model: 'Volkswagen Gol',
+    },
+  ],
+};
+
 module.exports = {
   DRIVER_ON_THE_WAY,
   correctReturnTravel,
@@ -54,4 +79,7 @@ module.exports = {
   correctAssignTravel,
   correctReturnDrivers,
   driverList,
+  createdDriver,
+  createdDriverWithoutCars,
+  createdDriverWithCars,
 };

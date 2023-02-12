@@ -78,7 +78,7 @@ app.get('/drivers', async (req, res) => {
 
 app.post('/drivers', async (req, res) => {
   const driver = req.body;
-  const result = await driverModel.insert(driver);
+  const result = await driverService.createDriver(driver);
   res.status(200).json(result);
 });
 

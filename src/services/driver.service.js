@@ -1,7 +1,8 @@
-const { travelModel, driverModel } = require('../models');
+const { travelModel, driverModel, carModel, driverCarModel } = require('../models');
 const {
   validateTravelAssignSchema,
   validadeAlreadyAssingn,
+  validateNewDriver,
 } = require('./validations/validationsInputValues');
 
 const WAITING_DRIVER = 1;
@@ -56,10 +57,42 @@ const getDrivers = async () => {
   return ({ type: null, message: drivers });
 };
 
+const createDriver = async (name, carIds) => {
+  // Validando dados recebidos
+  const error = await validateNewDriver(name, carIds);
+  if (error.type) return error;
+
+  // Cadastrando pessoa motorista
+  const driverId = await driverModel.insert({ name });
+  
+  // Pegando a pessoa motorista cadastrada na DB
+  const newDriver = await driverModel.findById(driverId);
+ 
+  // Se houver a lista de ids de carros, criamos os relacionamentos
+  // e adicionamos a lista ao resultado final,
+  // senão usamos um array vazio no lugar
+  if (carIds && carIds.length > 0) {
+    await Promise.all(carIds.map(
+      // Usando a camada Model para vincular os carros à pessoa motorista
+      async (carId) => driverCarModel.insert({ driverId: newDriver.id, carId }),
+    ));
+    // Adicionamos os carros ao resultado final
+    newDriver.cars = await Promise.all(
+      carIds.map(async (carId) => carModel.findById(carId)),
+    );
+  } else {
+    newDriver.cars = [];
+  }
+  
+  // Retornando os dados da pessoa motorista
+  return { type: null, message: newDriver };
+};
+
 module.exports = {
   getWaitingDriverTravels,
   travelAssign,
   startTravel,
   endTravel,
   getDrivers,
+  createDriver,
 };
