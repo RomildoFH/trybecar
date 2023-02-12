@@ -1,4 +1,4 @@
-const { travelModel } = require('../models');
+const { travelModel, driverModel } = require('../models');
 const {
   validateTravelAssignSchema,
   validadeAlreadyAssingn,
@@ -11,7 +11,7 @@ const TRAVEL_FINISHED = 4;
 
 const getWaitingDriverTravels = async () => {
   const travels = await travelModel.findByTravelStatusId(WAITING_DRIVER);
-  return { type: null, message: travels }; 
+  return { type: null, message: travels };
 };
 
 const travelAssign = async ({ travelId, driverId }) => {  
@@ -49,9 +49,17 @@ const endTravel = async ({ travelId, driverId }) => {
   return travel;
 };
 
+const getDrivers = async () => {
+  const [drivers] = await driverModel.findAll();
+  if (!drivers) return ({ type: 'DRIVERS_NOT_FOUND', message: 'could not find drivers' });
+
+  return ({ type: null, message: drivers });
+};
+
 module.exports = {
   getWaitingDriverTravels,
   travelAssign,
   startTravel,
   endTravel,
+  getDrivers,
 };

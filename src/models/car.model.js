@@ -14,7 +14,7 @@ const insert = async (car) => {
     `INSERT INTO trybecardb.cars (${columns}) VALUE (${placeholders})`,
   [...Object.values(car)],
   );
-  return (insertId);
+  return ({ id: insertId, ...car });
 };
 
 const findById = async (id) => {

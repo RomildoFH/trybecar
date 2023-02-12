@@ -23,8 +23,19 @@ const addRequestTravelSchema = Joi.object({
   waypoints: Joi.array().items(waypointSchema),
 });
 
+const addCarSchema = Joi.object({
+  model: Joi.string().min(3).message('"model" length must be at least 3 characters long'),
+  color: Joi.string().min(2).message('"color" length must be at least 2 characters long'),
+  licensePlate:
+    Joi.string()
+      .min(7)
+      .max(7)
+      .message('"licensePlate" length must be less than or equal to 7 characters long'),
+});
+
 module.exports = {
   idSchema,
   addPassengerSchema,
   addRequestTravelSchema,
+  addCarSchema,
 };

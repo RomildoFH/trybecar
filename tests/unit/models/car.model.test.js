@@ -26,7 +26,7 @@ describe('Testes unitários de models cars', function () {
 
     const result = await carModel.insert(newCar);
 
-    expect(result).to.equal(carsList.length + 1);
+    expect(result.id).to.equal(carsList.length + 1);
   });
 
   it('Testa se retorna um objeto com os dados do carro na rota get/cars/:id', async function () {

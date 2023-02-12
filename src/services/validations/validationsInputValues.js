@@ -1,6 +1,6 @@
 // src/services/validations/validationsInputValues.js
 
-const { idSchema, addPassengerSchema, addRequestTravelSchema } = require('./schemas');
+const { idSchema, addPassengerSchema, addRequestTravelSchema, addCarSchema } = require('./schemas');
 const { driverModel, travelModel } = require('../../models');
 
 const validateId = (id) => {
@@ -43,10 +43,17 @@ const validadeAlreadyAssingn = async (travelId) => {
   return { type: '', message: '' };
 };
 
+const validateCreateCar = async ({ model, color, licensePlate }) => {
+  const { error } = addCarSchema.validate({ model, color, licensePlate });
+  if (error) return { type: 'INVALID_VALUE', message: error.message };
+  return { type: null, message: '' };
+};
+
 module.exports = {
   validateId,
   validateNewPassenger,
   validateRequestTravelSchema,
   validateTravelAssignSchema,
   validadeAlreadyAssingn,
+  validateCreateCar,
 };

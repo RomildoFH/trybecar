@@ -1,6 +1,6 @@
 const express = require('express');
 const { driverModel, carModel, driverCarModel } = require('./models');
-const { passengerService, driverService } = require('./services');
+const { passengerService, driverService, carService } = require('./services');
 
 const app = express();
 
@@ -72,7 +72,7 @@ app.get('/drivers/:id', async (req, res) => {
 });
 
 app.get('/drivers', async (req, res) => {
-  const [result] = await driverModel.findAll();
+  const result = await driverService.getDrivers();
   res.status(200).json(result);
 });
 
@@ -95,7 +95,7 @@ app.get('/cars/:id', async (req, res) => {
 
 app.post('/cars', async (req, res) => {
   const carData = req.body;
-  const result = await carModel.insert(carData);
+  const result = await carService.createCar(carData);
   res.status(200).json(result);
 });
 
