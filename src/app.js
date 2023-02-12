@@ -1,51 +1,27 @@
 const express = require('express');
-const { travelModel, passengerModel, driverModel, carModel, driverCarModel } = require('./models');
-const connection = require('./models/connection');
+const { travelModel, driverModel, carModel, driverCarModel } = require('./models');
+const { passengerService, driverService } = require('./services');
 
 const app = express();
 
 app.use(express.json());
 
-const WAITING_DRIVER = 1;
 const DRIVER_ON_THE_WAY = 2;
 const TRAVEL_IN_PROGRESS = 3;
 const TRAVEL_FINISHED = 4;
 
-const passengerExists = async (passengerId) => {
-  // const [[passenger]] = await connection.execute(
-  //   'SELECT * FROM passengers WHERE id = ?',
-  //   [passengerId],
-  // );
-  const passenger = await passengerModel.findById(passengerId);
-  if (passenger) return true;
-  return false;
-};
-
-const saveWaypoints = (waypoints, travelId) => {
-  if (waypoints && waypoints.length > 0) {
-    return waypoints.map(async (value) => connection.execute(
-      'INSERT INTO waypoints (address, stop_order, travel_id) VALUE (?, ?, ?)',
-      [value.address, value.stopOrder, travelId],
-    ));
-  }
-  return [];
-};
-
 app.post('/passengers/:passengerId/request/travel', async (req, res) => {
   const { passengerId } = req.params;
   const { startingAddress, endingAddress, waypoints } = req.body;
-  if (await passengerExists(passengerId)) {
-    /* Aqui substituímos o trecho de código SQL pela chamada a função insert do model
-     e armazenamos o retorno da função na variável travelId */
-     const travelId = await travelModel.insert({ passengerId, startingAddress, endingAddress });
 
-     /* Renomeamos o parâmetro result.insertId para travelId */
-     await Promise.all(saveWaypoints(waypoints, travelId));
-
-     const travel = await travelModel.findById(travelId);
-     return res.status(201).json(travel);
-  }
-  res.status(500).json({ message: 'Ocorreu um erro' });
+  const travel = await passengerService.requestTravel(
+    passengerId, 
+    startingAddress, 
+    endingAddress, 
+    waypoints,
+  );
+  
+  res.status(201).json(travel);
 });
 
 app.post('/drivers-cars', async (req, res) => {
@@ -55,7 +31,7 @@ app.post('/drivers-cars', async (req, res) => {
 });
 
 app.get('/drivers/open/travels', async (_req, res) => {
-  const result = await travelModel.findByTravelStatusId(WAITING_DRIVER);
+  const result = await driverService.getWaitingDriverTravels();
   res.status(200).json(result);
 });
 
