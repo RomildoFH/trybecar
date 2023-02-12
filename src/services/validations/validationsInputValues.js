@@ -38,7 +38,7 @@ const validateTravelAssignSchema = async ({ travelId, driverId }) => {
 const validadeAlreadyAssingn = async (travelId) => {
   const travel = await travelModel.findById(travelId);
   if (travel && travel.driverId) {
-    return { type: 'TRAVEL_CONFLIT', message: 'traval already assigned' };
+    return { type: 'TRAVEL_CONFLIT', message: 'travel already assigned' };
   }
   return { type: '', message: '' };
 };
