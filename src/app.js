@@ -1,28 +1,12 @@
 const express = require('express');
 const { driverModel, carModel, driverCarModel } = require('./models');
-const { passengerService, driverService, carService } = require('./services');
+const { driverService, carService } = require('./services');
+const { passengerRouter } = require('./routers');
 
 const app = express();
 
 app.use(express.json());
-
-// const DRIVER_ON_THE_WAY = 2;
-// const TRAVEL_IN_PROGRESS = 3;
-// const TRAVEL_FINISHED = 4;
-
-app.post('/passengers/:passengerId/request/travel', async (req, res) => {
-  const { passengerId } = req.params;
-  const { startingAddress, endingAddress, waypoints } = req.body;
-
-  const travel = await passengerService.requestTravel(
-    passengerId, 
-    startingAddress, 
-    endingAddress, 
-    waypoints,
-  );
-  
-  res.status(201).json(travel);
-});
+app.use('/passengers', passengerRouter);
 
 app.post('/drivers-cars', async (req, res) => {
   const driver = req.body;
@@ -36,13 +20,7 @@ app.get('/drivers/open/travels', async (_req, res) => {
 });
 
 app.put('/drivers/:driverId/travels/:travelId/assign', async (req, res) => {
-  const { travelId, driverId } = req.params;  
-  
-  // await travelModel.updateById(travelId, { // Acesso direto as models, deve ser feito pelo service
-  //   driverId,
-  //   travelStatusId: DRIVER_ON_THE_WAY,
-  // });
-  // const travel = await travelModel.findById(travelId);
+  const { travelId, driverId } = req.params;
   const travel = await driverService.travelAssign({ travelId, driverId });
 
   if (travel.type) return res.status(400).json(travel.message);
@@ -52,7 +30,6 @@ app.put('/drivers/:driverId/travels/:travelId/assign', async (req, res) => {
 
 app.put('/drivers/:driverId/travels/:travelId/start', async (req, res) => {
   const { travelId, driverId } = req.params;
-
   const travel = await driverService.startTravel({ travelId, driverId });
   if (travel.type) return res.status(400).json(travel.message);
   return res.status(200).json(travel);
